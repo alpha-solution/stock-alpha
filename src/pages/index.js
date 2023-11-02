@@ -1,30 +1,38 @@
+import { useEffect, useState } from "react";
+
 const getEmployee = async () => {
-  try {
-    const res = await fetch("http://localhost:3000/api/employee", {
-      method: "GET",
-    })
+	try {
+		const res = await fetch("http://localhost:3000/api/employee");
+		const data = await res.json();
+		return data;
+	} catch (e) {
+		console.log("Error loading employee: ", e);
+		return null;
+	}
+};
 
-    if (!res.ok) {
-      throw new Error()
-    }
+export default function Home() {
+	const [employeeData, setEmployeeData] = useState(null);
 
-    return res.json()
+	useEffect(() => {
+		const fetchEmployeeData = async () => {
+			const employee = await getEmployee();
+			if (employee) setEmployeeData(employee);
+		};
 
-  } catch (e) {
-    console.log("Error loading employee: ", e)
-  }
-}
+		fetchEmployeeData();
+	}, []);
 
-export default async function Home() {
-  const employee = await getEmployee()
-
-  return (
-    <>
-      {employee.map((em) => (
-        <div>
-          {em.username}
-        </div>
-      ))}
-    </>
-  )
+	return (
+		<div>
+			<div>Hello World</div>
+			{employeeData && (
+				<div>
+					{employeeData.map((em) => (
+						<div key={em.id}>{em.username}</div>
+					))}
+				</div>
+			)}
+		</div>
+	);
 }
