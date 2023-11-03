@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import LoginForm from "@/components/LoginForm";
+// import { useEffect, useState } from "react";
 
-const getEmployee = async () => {
+/* const getEmployee = async () => {
 	try {
 		const res = await fetch("http://localhost:3000/api/employee");
 		const data = await res.json();
@@ -35,4 +36,8 @@ export default function Home() {
 			)}
 		</div>
 	);
+} */
+
+export default function Login() {
+	return <LoginForm />;
 }
