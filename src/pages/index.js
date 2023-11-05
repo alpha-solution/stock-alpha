@@ -3,7 +3,7 @@ import LoginForm from "@/components/LoginForm";
 
 /* const getEmployee = async () => {
 	try {
-		const res = await fetch("http://localhost:3000/api/employee");
+		const res = await fetch("http://localhost:3000/api/draft");
 		const data = await res.json();
 		return data;
 	} catch (e) {
@@ -18,7 +18,9 @@ export default function Home() {
 	useEffect(() => {
 		const fetchEmployeeData = async () => {
 			const employee = await getEmployee();
-			if (employee) setEmployeeData(employee);
+			if (employee) {
+				setEmployeeData(employee);
+			}
 		};
 
 		fetchEmployeeData();
