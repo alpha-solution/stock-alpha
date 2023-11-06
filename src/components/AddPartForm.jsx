@@ -14,8 +14,19 @@ const AddPartForm = () => {
         setPartName(e.target.value);
     };
 
-    const handleAddPart = () => {
-        toast.success("Part added successfully");
+    const checkExistPart = async () => {
+        try {
+            const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
+            return await res.json();
+        } catch (e) {
+            console.log("Error: ", e);
+            return null;
+        }
+    };
+
+    const handleAddPart = async () => {
+        const existPart = await checkExistPart();
+        // toast.success("Part added successfully");
     };
 
     return (
