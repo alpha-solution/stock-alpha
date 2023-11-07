@@ -20,13 +20,31 @@ const AddPartForm = () => {
             return await res.json();
         } catch (e) {
             console.log("Error: ", e);
-            return null;
+            return;
         }
     };
 
     const handleAddPart = async () => {
         const existPart = await checkExistPart();
-        // toast.success("Part added successfully");
+        console.log(existPart);
+
+        if (existPart) {
+            toast.warn("Already existed in database");
+        } else {
+
+            try {
+                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`);
+
+                if (result.ok) {
+                    toast.success("Part added successfully");
+                } else {
+                    toast.error("Failed adding new part");
+                }
+            } catch (e) {
+                console.log("Error: ", e);
+            }
+
+        }
     };
 
     return (
