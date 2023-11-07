@@ -21,7 +21,7 @@ export default function LoginForm() {
             });
 
             if (res.error) {
-                setError("Incorrect username or password")
+                setError("Incorrect username or password");
                 return;
             }
 
