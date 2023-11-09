@@ -6,7 +6,7 @@ const DataTable = ({ actionButton, data, column }) => {
     const [columnName, setColumnName] = useState(column);
 
     return (
-        <div className="container mx-auto mt-8 max-w-4xl">
+        <div className="container mx-auto mt-4 max-w-4xl">
             <table className="min-w-full border border-gray-300">
                 <thead>
                     <tr>
@@ -22,7 +22,7 @@ const DataTable = ({ actionButton, data, column }) => {
                     <tr className="border-b">
                         <td className="py-2">Lorem ipsum dolor</td>
                         {isAction && (
-                            <td className="py-2" style={{ width: '130px' }}>
+                            <td className="py-2" style={{ width: "130px" }}>
                                 <button className="mr-2 bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
                                 <button className="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
                             </td>
