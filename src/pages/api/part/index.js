@@ -1,7 +1,7 @@
 import Part from "@/models/part";
 import connectMongoDB from "@/utils/connect";
 
-export default async function handler(res) {
+export default async function handler(req, res) {
     try {
         await connectMongoDB();
         const parts = await Part.find({});
