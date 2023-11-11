@@ -8,8 +8,6 @@ const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
         return <p>Loading...</p>;
     }
 
-    console.log("data table: ", data);
-
     return (
         <div className="container mx-auto mt-4 max-w-4xl">
             <table className="min-w-full border border-gray-300">
