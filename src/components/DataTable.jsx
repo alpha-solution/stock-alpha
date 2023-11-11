@@ -8,6 +8,8 @@ const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
         return <p>Loading...</p>;
     }
 
+    console.log("data table: ", data);
+
     return (
         <div className="container mx-auto mt-4 max-w-4xl">
             <table className="min-w-full border border-gray-300">
@@ -24,7 +26,7 @@ const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data ? (
+                    {data && data.length > 0 ? (
                         data.map((rowData, rowIndex) => (
                             <tr key={rowIndex} className="border-b">
                                 {columnModel.map((colName, colIndex) => (
