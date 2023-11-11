@@ -11,10 +11,17 @@ export default async function handler(req, res) {
             part_code: part[0],
             part_name: part[1]
         });
-        insertedPart.save();
-        return res.status(200).json({ success: true });
+
+        const result = await insertedPart.save();
+
+        if (result) {
+            return res.status(200).json({ success: true });
+        } else {
+            return res.status(500).json({ success: false });
+        }
+
     } catch (error) {
         console.error("Error: ", error);
-        return res.status(500).json({ success: false });
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 }
