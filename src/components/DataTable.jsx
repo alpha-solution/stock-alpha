@@ -2,7 +2,7 @@ import React from "react";
 import PlaceHolderRow from "./PlaceHolderRow";
 import ActionButton from "./ActionButton";
 
-const DataTable = ({ actionButton, data, columnTable }) => {
+const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
 
     if (!data) {
         return <p>Loading...</p>;
