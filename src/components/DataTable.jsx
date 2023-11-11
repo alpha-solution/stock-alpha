@@ -1,6 +1,8 @@
 import React from "react";
+import PlaceHolderRow from "./PlaceHolderRow";
+import ActionButton from "./ActionButton";
 
-const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
+const DataTable = ({ actionButton, data, columnTable }) => {
 
     if (!data) {
         return <p>Loading...</p>;
@@ -22,21 +24,20 @@ const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((rowData, rowIndex) => (
-                        <tr key={rowIndex} className="border-b">
-                            {columnModel.map((colName, colIndex) => (
-                                <td key={colIndex} className="py-2">
-                                    {rowData[colName]}
-                                </td>
-                            ))}
-                            {actionButton && (
-                                <td className="py-2" style={{ width: "130px" }}>
-                                    <button className="mr-2 bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
-                                    <button className="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
-                                </td>
-                            )}
-                        </tr>
-                    ))}
+                    {data ? (
+                        data.map((rowData, rowIndex) => (
+                            <tr key={rowIndex} className="border-b">
+                                {columnModel.map((colName, colIndex) => (
+                                    <td key={colIndex} className="py-2">
+                                        {rowData[colName]}
+                                    </td>
+                                ))}
+                                {actionButton && <ActionButton />}
+                            </tr>
+                        ))
+                    ) : (
+                        <PlaceHolderRow columnModel={columnModel} actionButton={actionButton} />
+                    )}
                 </tbody>
             </table>
         </div>
