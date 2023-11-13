@@ -2,6 +2,19 @@ import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+export const checkExistPart = async (partCode) => {
+    if (!partCode) {
+        throw new Error("partCode is undefined");
+    }
+
+    try {
+        const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
+        return await res.json();
+    } catch (e) {
+        console.log("Error: ", e);
+    }
+};
+
 const AddPartForm = () => {
     const [partCode, setPartCode] = useState("");
     const [partName, setPartName] = useState("");
@@ -14,18 +27,8 @@ const AddPartForm = () => {
         setPartName(e.target.value);
     };
 
-    const checkExistPart = async () => {
-        try {
-            const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
-            return await res.json();
-        } catch (e) {
-            console.log("Error: ", e);
-            return;
-        }
-    };
-
     const handleAddPart = async () => {
-        const existPart = await checkExistPart();
+        const existPart = await checkExistPart(partCode);
         console.log(existPart);
 
         if (existPart) {
