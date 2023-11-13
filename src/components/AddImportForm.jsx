@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { checkExistPart } from "./AddPartForm";
 
 const AddImportForm = () => {
     const [partCode, setPartCode] = useState("");
@@ -35,20 +36,52 @@ const AddImportForm = () => {
         return new Date().toLocaleTimeString("th-TH", options);
     };
 
+    const handleAddPart = async () => {
+        const existPart = await checkExistPart(partCode);
+        console.log(existPart);
+
+        if (existPart) {
+            return true;
+        } else {
+
+            try {
+                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`);
+
+                if (result.ok) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (e) {
+                console.log("Error: ", e);
+            }
+
+        }
+    };
+
     const handleAddImport = async () => {
         const currentDate = getCurrentDate();
         const currentTime = getCurrentTime();
 
-        try {
-            const result = await fetch(`http://localhost:3000/api/impt/${currentDate}/${currentTime}/${partCode}/${partName}/${partAmt}/${userName}`);
+        const isPartAdded = await handleAddPart();
 
-            if (result.ok) {
-                toast.success("Import added successfully");
-            } else {
-                toast.error("Failed adding new import");
+        if (isPartAdded) {
+
+            try {
+                const result = await fetch(`http://localhost:3000/api/impt/${currentDate}/${currentTime}/${partCode}/${partName}/${partAmt}/${userName}`);
+
+                if (result.ok) {
+                    toast.success("Import added successfully");
+                } else {
+                    toast.error("Failed adding new import");
+                }
+            } catch (e) {
+                console.log("Error: ", e);
             }
-        } catch (e) {
-            console.log("Error: ", e);
+
+        } else {
+            toast.error("Failed adding new part automatically");
+            toast.warn("Please try adding part manually first");
         }
     };
 
