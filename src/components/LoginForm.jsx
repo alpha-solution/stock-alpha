@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoginForm() {
 
@@ -14,6 +16,7 @@ export default function LoginForm() {
         e.preventDefault();
 
         try {
+
             const res = await signIn("credentials", {
                 username, password, redirect: false
             });
@@ -26,7 +29,7 @@ export default function LoginForm() {
             router.replace("home");
 
         } catch (error) {
-            console.log(error);
+            toast.error("Error 404");
         }
     };
 
@@ -77,6 +80,7 @@ export default function LoginForm() {
                     </div>
                 </form>
             </div>
+            <ToastContainer />
         </div>
     );
 }
