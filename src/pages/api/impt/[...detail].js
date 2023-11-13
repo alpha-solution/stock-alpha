@@ -7,7 +7,7 @@ export default async function handler(req, res) {
         const { detail } = req.query;
         console.log(detail);
 
-        const date = `${detail[0]}/${detail[1]}/${detail[2]}`;
+        const date = `${detail[1]}/${detail[0]}/${detail[2]}`;
 
         const insertedImport = new Import({
             import_date: date,
