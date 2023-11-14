@@ -27,6 +27,28 @@ const AddPartForm = () => {
         setPartName(e.target.value);
     };
 
+    const getCurrentDate = () => {
+        const options = { day: "numeric", month: "numeric", year: "numeric" };
+        return new Date().toLocaleDateString(undefined, options);
+    };
+
+    const addPartToStock = async () => {
+        try {
+
+            const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}/0/${getCurrentDate()}`);
+
+            if (result.ok) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (e) {
+            console.log("Error: ", e);
+            return false;
+        }
+    };
+
     const handleAddPart = async () => {
         const existPart = await checkExistPart(partCode);
         console.log(existPart);
@@ -36,13 +58,33 @@ const AddPartForm = () => {
         } else {
 
             try {
-                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`);
+
+                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
+                    method: "POST"
+                });
 
                 if (result.ok) {
-                    toast.success("Part added successfully");
+                    
+                    const isAddToStock = addPartToStock();
+
+                    if (isAddToStock) {
+                        toast.success("Part added successfully");
+                    } else {
+                        const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
+                            method: "DELETE"
+                        });
+
+                        if (result.ok) {
+                            toast.error("Failed adding new part");
+                        } else {
+                            throw new Error("Something went wrong with removing part");
+                        }
+                    }
+
                 } else {
                     toast.error("Failed adding new part");
                 }
+
             } catch (e) {
                 console.log("Error: ", e);
             }
