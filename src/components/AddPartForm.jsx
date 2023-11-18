@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const getCurrentDate = () => {
+    const options = { day: "numeric", month: "numeric", year: "numeric" };
+    return new Date().toLocaleDateString(undefined, options);
+};
+
 export const checkExistPart = async (partCode) => {
     if (!partCode) {
         throw new Error("partCode is undefined");
@@ -10,6 +15,28 @@ export const checkExistPart = async (partCode) => {
     try {
         const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
         return await res.json();
+    } catch (e) {
+        console.log("Error: ", e);
+    }
+};
+
+export const addPartToStock = async (partCode, partName) => {
+    if (!partCode || !partName) {
+        throw new Error("partCode and partName are undefined");
+    }
+
+    try {
+
+        const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}/0/${getCurrentDate()}`, {
+            method: "POST"
+        });
+
+        if (result.ok) {
+            return true;
+        } else {
+            return false;
+        }
+
     } catch (e) {
         console.log("Error: ", e);
     }
@@ -27,28 +54,6 @@ const AddPartForm = () => {
         setPartName(e.target.value);
     };
 
-    const getCurrentDate = () => {
-        const options = { day: "numeric", month: "numeric", year: "numeric" };
-        return new Date().toLocaleDateString(undefined, options);
-    };
-
-    const addPartToStock = async () => {
-        try {
-
-            const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}/0/${getCurrentDate()}`);
-
-            if (result.ok) {
-                return true;
-            } else {
-                return false;
-            }
-
-        } catch (e) {
-            console.log("Error: ", e);
-            return false;
-        }
-    };
-
     const handleAddPart = async () => {
         const existPart = await checkExistPart(partCode);
         console.log(existPart);
@@ -64,8 +69,8 @@ const AddPartForm = () => {
                 });
 
                 if (result.ok) {
-                    
-                    const isAddToStock = addPartToStock();
+
+                    const isAddToStock = await addPartToStock(partCode, partName);
 
                     if (isAddToStock) {
                         toast.success("Part added successfully");
