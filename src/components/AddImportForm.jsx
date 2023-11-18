@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { checkExistPart } from "./AddPartForm";
+import { addPartToStock, checkExistPart } from "./AddPartForm";
 
 const AddImportForm = () => {
     const [partCode, setPartCode] = useState("");
@@ -45,17 +45,75 @@ const AddImportForm = () => {
         } else {
 
             try {
-                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`);
+
+                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
+                    method: "POST"
+                });
 
                 if (result.ok) {
-                    return true;
+
+                    const isAddToStock = await addPartToStock(partCode, partName);
+
+                    if (isAddToStock) {
+                        return true;
+                    } else {
+                        const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
+                            method: "DELETE"
+                        });
+
+                        if (result.ok) {
+                            return false;
+                        } else {
+                            throw new Error("Something went wrong with removing part");
+                        }
+                    }
+
                 } else {
                     return false;
                 }
+
             } catch (e) {
-                console.log("Error: ", e);
+                throw new Error(e);
             }
 
+        }
+    };
+
+    const getPreviousTotalAmount = async () => {
+        try {
+
+            const res = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}`, {
+                method: "GET"
+            });
+
+            const stock = await res.json();
+
+            return stock.total_amount;
+
+        } catch (e) {
+            console.log("Error: ", e);
+        }
+    };
+
+    const updateTotalAmountStock = async (updatedTotalAmt) => {
+        if (!updatedTotalAmt) {
+            throw new Error("updatedTotalAmt is undefined");
+        }
+
+        try {
+
+            const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${updatedTotalAmt}`, {
+                method: "PUT"
+            });
+
+            if (result.ok) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (e) {
+            console.log("Error: ", e);
         }
     };
 
@@ -68,13 +126,25 @@ const AddImportForm = () => {
         if (isPartAdded) {
 
             try {
+
                 const result = await fetch(`http://localhost:3000/api/impt/${currentDate}/${currentTime}/${partCode}/${partName}/${partAmt}/${userName}`);
 
                 if (result.ok) {
-                    toast.success("Import added successfully");
+
+                    const currentTotalAmount = Number(partAmt) + await getPreviousTotalAmount();
+
+                    const isUpdatedTotalAmt = await updateTotalAmountStock(currentTotalAmount);
+
+                    if (isUpdatedTotalAmt) {
+                        toast.success("Import added successfully");
+                    } else {
+                        toast.error("Failed updating total amount in stock");
+                    }
+
                 } else {
                     toast.error("Failed adding new import");
                 }
+
             } catch (e) {
                 console.log("Error: ", e);
             }
