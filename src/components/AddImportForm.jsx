@@ -44,54 +44,46 @@ const AddImportForm = () => {
             return true;
         } else {
 
-            try {
+            const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
+                method: "POST"
+            });
 
-                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
-                    method: "POST"
-                });
+            if (result.ok) {
 
-                if (result.ok) {
+                const isAddToStock = await addPartToStock(partCode, partName);
 
-                    const isAddToStock = await addPartToStock(partCode, partName);
-
-                    if (isAddToStock) {
-                        return true;
-                    } else {
-                        const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
-                            method: "DELETE"
-                        });
-
-                        if (result.ok) {
-                            return false;
-                        } else {
-                            throw new Error("Something went wrong with removing part");
-                        }
-                    }
-
+                if (isAddToStock) {
+                    return true;
                 } else {
-                    return false;
+
+                    const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
+                        method: "DELETE"
+                    });
+
+                    if (result.ok) {
+                        return false;
+                    } else {
+                        toast.error("Error 404");
+                        throw new Error("Something went wrong with removing part");
+                    }
                 }
 
-            } catch (e) {
-                throw new Error(e);
+            } else {
+                return false;
             }
-
         }
     };
 
     const getPreviousTotalAmount = async () => {
-        try {
+        const res = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}`, {
+            method: "GET"
+        });
 
-            const res = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}`, {
-                method: "GET"
-            });
-
+        if (res.ok) {
             const stock = await res.json();
-
             return stock.total_amount;
-
-        } catch (e) {
-            console.log("Error: ", e);
+        } else {
+            throw new Error("Something went wrong with getting previous total amount");
         }
     };
 
@@ -100,20 +92,32 @@ const AddImportForm = () => {
             throw new Error("updatedTotalAmt is undefined");
         }
 
-        try {
+        const currentDate = getCurrentDate();
 
-            const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${updatedTotalAmt}`, {
-                method: "PUT"
-            });
+        const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${updatedTotalAmt}/${currentDate}`, {
+            method: "PUT"
+        });
 
-            if (result.ok) {
-                return true;
-            } else {
-                return false;
-            }
+        if (result.ok) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 
-        } catch (e) {
-            console.log("Error: ", e);
+    const deleteImportById = async (id) => {
+        if (!id) {
+            throw new Error("id is undefined");
+        }
+
+        const result = await fetch(`http://localhost:3000/api/impt/${id}`, {
+            method: "DELETE"
+        });
+
+        if (result.ok) {
+            return true;
+        } else {
+            return false;
         }
     };
 
@@ -125,14 +129,16 @@ const AddImportForm = () => {
 
         if (isPartAdded) {
 
-            try {
+            const result = await fetch(`http://localhost:3000/api/impt/${currentDate}/${currentTime}/${partCode}/${partName}/${partAmt}/${userName}`, {
+                method: "POST"
+            });
+            const { insertedId } = await result.json();
 
-                const result = await fetch(`http://localhost:3000/api/impt/${currentDate}/${currentTime}/${partCode}/${partName}/${partAmt}/${userName}`);
+            if (result.ok) {
 
-                if (result.ok) {
+                try {
 
                     const currentTotalAmount = Number(partAmt) + await getPreviousTotalAmount();
-
                     const isUpdatedTotalAmt = await updateTotalAmountStock(currentTotalAmount);
 
                     if (isUpdatedTotalAmt) {
@@ -141,12 +147,18 @@ const AddImportForm = () => {
                         toast.error("Failed updating total amount in stock");
                     }
 
-                } else {
-                    toast.error("Failed adding new import");
+                } catch (e) {
+                    console.log("Error: ", e);
+                    const isStockDeleted = await deleteImportById(insertedId);
+                    toast.error("Error 404");
+
+                    if (!isStockDeleted) {
+                        throw new Error("Something went wrong with removing import");
+                    }
                 }
 
-            } catch (e) {
-                console.log("Error: ", e);
+            } else {
+                toast.error("Failed adding new import");
             }
 
         } else {

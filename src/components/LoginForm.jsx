@@ -47,7 +47,7 @@ export default function LoginForm() {
                         </label>
                         <input
                             type="username"
-                            onChange={e => {
+                            onChange={(e) => {
                                 setUsername(e.target.value);
                                 setError("");
                             }}
@@ -63,7 +63,7 @@ export default function LoginForm() {
                         </label>
                         <input
                             type="password"
-                            onChange={e => {
+                            onChange={(e) => {
                                 setPassword(e.target.value);
                                 setError("");
                             }}

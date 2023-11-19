@@ -1,4 +1,5 @@
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -11,6 +12,9 @@ export default function Home() {
       <h1 className="text-4xl font-bold text-center text-black">
         WELCOME {userName}
       </h1>
+      <div>
+        <Link href="/import">Import</Link>
+      </div>
     </div>
   );
 }

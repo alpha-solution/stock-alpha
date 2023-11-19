@@ -2,50 +2,46 @@ import Part from "@/models/part";
 import connectMongoDB from "@/utils/connect";
 
 export default async function handler(req, res) {
-    if (req.method === "POST") {
-        try {
-            await connectMongoDB();
-            const { part } = req.query;
-            console.log(part);
 
-            const insertedPart = new Part({
-                part_code: part[0],
-                part_name: part[1]
-            });
+    try {
 
-            const result = await insertedPart.save();
+        await connectMongoDB();
+        const { part } = req.query;
+        console.log(part);
 
-            if (result) {
-                return res.status(200).json({ success: true });
-            } else {
-                return res.status(500).json({ success: false });
-            }
+        switch (req.method) {
 
-        } catch (error) {
-            console.error("Error: ", error);
-            return res.status(500).json({ error: "Internal Server Error" });
+            case "POST":
+                const insertedPart = new Part({
+                    part_code: part[0],
+                    part_name: part[1]
+                });
+
+                const resultPost = await insertedPart.save();
+
+                if (resultPost) {
+                    return res.status(200).json({ success: true });
+                } else {
+                    return res.status(500).json({ success: false });
+                }
+
+            case "DELETE":
+                const partCode = part[0];
+                const resultDelete = await Part.deleteOne({ part_code: partCode });
+
+                if (resultDelete) {
+                    return res.status(200).json({ success: true });
+                } else {
+                    return res.status(500).json({ success: false });
+                }
+
+            default:
+                return res.status(405).json({ error: "Method Not Allowed" });
         }
+
+    } catch (error) {
+        console.error("Error: ", error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 
-    if (req.method === "DELETE") {
-        try {
-            await connectMongoDB();
-            const { part } = req.query;
-            console.log(part);
-
-            const partCode = part[0];
-
-            const result = await Part.deleteOne({ part_code: partCode });
-
-            if (result) {
-                return res.status(200).json({ success: true });
-            } else {
-                return res.status(500).json({ success: false });
-            }
-
-        } catch (error) {
-            console.error("Error: ", error);
-            return res.status(500).json({ error: "Internal Server Error" });
-        }
-    }
 }

@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const getParts = async () => {
-    try {
-        const res = await fetch("http://localhost:3000/api/part");
+    const res = await fetch("http://localhost:3000/api/part");
+
+    if (res.ok) {
         return await res.json();
-    } catch (e) {
-        console.log("Error loading parts: ", e);
+    } else {
         return null;
     }
 };

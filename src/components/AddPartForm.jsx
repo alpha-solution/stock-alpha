@@ -12,11 +12,13 @@ export const checkExistPart = async (partCode) => {
         throw new Error("partCode is undefined");
     }
 
-    try {
-        const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
+    const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
+
+    if (res.ok) {
         return await res.json();
-    } catch (e) {
-        console.log("Error: ", e);
+    } else {
+        toast.error("Error 404");
+        throw new Error("Something went wrong with checking existed part");
     }
 };
 
@@ -25,20 +27,14 @@ export const addPartToStock = async (partCode, partName) => {
         throw new Error("partCode and partName are undefined");
     }
 
-    try {
+    const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}/0/${getCurrentDate()}`, {
+        method: "POST"
+    });
 
-        const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}/0/${getCurrentDate()}`, {
-            method: "POST"
-        });
-
-        if (result.ok) {
-            return true;
-        } else {
-            return false;
-        }
-
-    } catch (e) {
-        console.log("Error: ", e);
+    if (result.ok) {
+        return true;
+    } else {
+        return false;
     }
 };
 
@@ -62,38 +58,34 @@ const AddPartForm = () => {
             toast.warn("Already existed in database");
         } else {
 
-            try {
+            const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
+                method: "POST"
+            });
 
-                const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
-                    method: "POST"
-                });
+            if (result.ok) {
 
-                if (result.ok) {
+                const isAddToStock = await addPartToStock(partCode, partName);
 
-                    const isAddToStock = await addPartToStock(partCode, partName);
+                if (isAddToStock) {
+                    toast.success("Part added successfully");
+                } else {
 
-                    if (isAddToStock) {
-                        toast.success("Part added successfully");
+                    const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
+                        method: "DELETE"
+                    });
+
+                    if (result.ok) {
+                        toast.error("Failed adding new part");
                     } else {
-                        const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
-                            method: "DELETE"
-                        });
-
-                        if (result.ok) {
-                            toast.error("Failed adding new part");
-                        } else {
-                            throw new Error("Something went wrong with removing part");
-                        }
+                        toast.error("Error 404");
+                        throw new Error("Something went wrong with removing part");
                     }
 
-                } else {
-                    toast.error("Failed adding new part");
                 }
 
-            } catch (e) {
-                console.log("Error: ", e);
+            } else {
+                toast.error("Failed adding new part");
             }
-
         }
     };
 

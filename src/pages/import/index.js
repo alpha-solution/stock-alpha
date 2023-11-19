@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const getImports = async () => {
-    try {
-        const res = await fetch("http://localhost:3000/api/impt");
+    const res = await fetch("http://localhost:3000/api/impt");
+
+    if (res.ok) {
         return await res.json();
-    } catch (e) {
-        console.log("Error loading imports: ", e);
+    } else {
         return null;
     }
 };
