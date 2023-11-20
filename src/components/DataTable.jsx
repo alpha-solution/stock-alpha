@@ -9,17 +9,17 @@ const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
     }
 
     return (
-        <div className="container mx-auto mt-4 max-w-4xl">
+        <div className="container mx-auto mt-4 max-w-4xl overflow-x-hidden sm:overflow-x-auto">
             <table className="min-w-full border border-gray-300">
                 <thead>
                     <tr>
                         {columnTable.map((colName, colIndex) => (
-                            <th key={colIndex} className="py-2 bg-gray-100 border-b text-left sm:pr-3 md:pr-0">
+                            <th key={colIndex} className="py-2 bg-gray-100 border-b text-left sm:pr-7 md:pr-0">
                                 {colName}
                             </th>
                         ))}
                         {actionButton && (
-                            <th className="py-2 bg-gray-100 border-b text-left sm:pr-3 md:pr-0">Actions</th>
+                            <th className="py-2 bg-gray-100 border-b text-left sm:pr-7 md:pr-0">Actions</th>
                         )}
                     </tr>
                 </thead>
