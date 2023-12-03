@@ -1,5 +1,5 @@
-import AddImportForm from "@/components/AddImportForm";
+import ImportForm from "@/components/ImportForm";
 
 export default function AddImport() {
-    return <AddImportForm />;
+    return <ImportForm />;
 }
