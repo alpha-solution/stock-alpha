@@ -2,7 +2,7 @@ import React from "react";
 import PlaceHolderRow from "./PlaceHolderRow";
 import ActionButton from "./ActionButton";
 
-const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
+const DataTable = ({ actionButton, data, columnTable, columnModel, topic }) => {
 
     if (!data) {
         return <p>Loading...</p>;
@@ -32,7 +32,7 @@ const DataTable = ({ actionButton, data, columnTable, columnModel }) => {
                                         {rowData[colName]}
                                     </td>
                                 ))}
-                                {actionButton && <ActionButton />}
+                                {actionButton && <ActionButton data={rowData} topic={topic} />}
                             </tr>
                         ))
                     ) : (
