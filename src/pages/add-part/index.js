@@ -1,5 +1,5 @@
-import AddPartForm from "@/components/AddPartForm";
+import PartForm from "@/components/PartForm";
 
 export default function AddPart() {
-	return <AddPartForm />;
+	return <PartForm />;
 }

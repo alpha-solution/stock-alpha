@@ -38,9 +38,15 @@ export const addPartToStock = async (partCode, partName) => {
     }
 };
 
-const AddPartForm = () => {
-    const [partCode, setPartCode] = useState("");
-    const [partName, setPartName] = useState("");
+const PartForm = ({ title = "Add Part", data = "" }) => {
+    const [partCode, setPartCode] = useState(data ? data.part_code : "");
+    const [partName, setPartName] = useState(data ? data.part_name : "");
+
+    const filterButton = () => {
+        if (title === "Add Part") {
+            handleAddPart();
+        }
+    };
 
     const handlePartCodeChange = (e) => {
         setPartCode(e.target.value);
@@ -92,7 +98,7 @@ const AddPartForm = () => {
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="container mx-auto p-4 text-center" style={{ maxWidth: "400px" }}>
-                <h1 className="text-2xl font-bold mb-4">Add Part</h1>
+                <h1 className="text-2xl font-bold mb-4">{title}</h1>
 
                 <div className="mb-4">
                     <label className="block text-gray-600 text-left font-semibold">Part Code</label>
@@ -117,9 +123,9 @@ const AddPartForm = () => {
                 <div className="text-left">
                     <button
                         className="bg-blue-500 text-white font-semibold p-2 rounded hover:bg-blue-600"
-                        onClick={handleAddPart}
+                        onClick={filterButton}
                     >
-                        Add Part
+                        {title}
                     </button>
                 </div>
             </div>
@@ -128,4 +134,4 @@ const AddPartForm = () => {
     );
 };
 
-export default AddPartForm;
+export default PartForm;
