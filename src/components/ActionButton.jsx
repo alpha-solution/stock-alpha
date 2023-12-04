@@ -5,8 +5,14 @@ const ActionButton = ({ data, topic }) => {
     let pathEdit = "";
     const router = useRouter();
 
-    if (topic === "import") {
-        pathEdit = "edit-import";
+    switch (topic) {
+        case "import":
+            pathEdit = "edit-import";
+            break;
+
+        case "part":
+            pathEdit = "edit-part";
+            break;
     }
 
     const handleEditClicked = () => {
