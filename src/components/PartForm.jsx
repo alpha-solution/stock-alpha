@@ -1,50 +1,15 @@
+import PartManager from "@/utils/part";
 import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const getCurrentDate = () => {
-    const options = { day: "numeric", month: "numeric", year: "numeric" };
-    return new Date().toLocaleDateString(undefined, options);
-};
-
-export const checkExistPart = async (partCode) => {
-    if (!partCode) {
-        throw new Error("partCode is undefined");
-    }
-
-    const res = await fetch(`http://localhost:3000/api/exist-part/${partCode}`);
-
-    if (res.ok) {
-        return await res.json();
-    } else {
-        toast.error("Error 404");
-        throw new Error("Something went wrong with checking existed part");
-    }
-};
-
-export const addPartToStock = async (partCode, partName) => {
-    if (!partCode || !partName) {
-        throw new Error("partCode and partName are undefined");
-    }
-
-    const result = await fetch(`http://localhost:3000/api/stock/${partCode}/${partName}/0/${getCurrentDate()}`, {
-        method: "POST"
-    });
-
-    if (result.ok) {
-        return true;
-    } else {
-        return false;
-    }
-};
 
 const PartForm = ({ title = "Add Part", data = "" }) => {
     const [partCode, setPartCode] = useState(data ? data.part_code : "");
     const [partName, setPartName] = useState(data ? data.part_name : "");
 
-    const filterButton = () => {
+    const filterButton = async () => {
         if (title === "Add Part") {
-            handleAddPart();
+            await PartManager.add(partCode, partName);
         }
     };
 
@@ -54,45 +19,6 @@ const PartForm = ({ title = "Add Part", data = "" }) => {
 
     const handlePartNameChange = (e) => {
         setPartName(e.target.value);
-    };
-
-    const handleAddPart = async () => {
-        const existPart = await checkExistPart(partCode);
-        console.log(existPart);
-
-        if (existPart) {
-            toast.warn("Already existed in database");
-        } else {
-
-            const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
-                method: "POST"
-            });
-
-            if (result.ok) {
-
-                const isAddToStock = await addPartToStock(partCode, partName);
-
-                if (isAddToStock) {
-                    toast.success("Part added successfully");
-                } else {
-
-                    const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
-                        method: "DELETE"
-                    });
-
-                    if (result.ok) {
-                        toast.error("Failed adding new part");
-                    } else {
-                        toast.error("Error 404");
-                        throw new Error("Something went wrong with removing part");
-                    }
-
-                }
-
-            } else {
-                toast.error("Failed adding new part");
-            }
-        }
     };
 
     return (
