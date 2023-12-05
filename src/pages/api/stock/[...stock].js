@@ -29,9 +29,7 @@ export default async function handler(req, res) {
                 }
 
             case "GET":
-                const part_code = stock[0];
-                const part_name = stock[1];
-                const foundStock = await Stock.findOne({ part_code, part_name }).exec();
+                const foundStock = await Stock.findOne({ part_code: stock[0] }).exec();
                 console.log(foundStock ? foundStock : "Not found");
                 return res.status(200).json(foundStock);
 
