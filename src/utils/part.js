@@ -1,4 +1,10 @@
 import { toast } from "react-toastify";
+import { getCurrentDate } from "./datetime";
+
+export const ActionType = {
+    RETURN_TOAST: "RETURN_TOAST",
+    RETURN_BOOLEAN: "RETURN_BOOLEAN"
+};
 
 class PartManager {
 
@@ -33,15 +39,23 @@ class PartManager {
         }
     }
 
-    static async add(partCode, partName) {
-        if (!partCode || !partName) {
-            throw new Error("partCode and partName are undefined");
+    static async add(partCode, partName, actionType) {
+        if (!partCode || !partName || !actionType) {
+            throw new Error("partCode, partName, and actionType are undefined");
+        } else if (!Object.values(ActionType).includes(actionType)) {
+            throw new Error("Invaild action type");
         }
 
         const isExist = await PartManager.isExist(partCode);
 
         if (isExist) {
-            toast.warn("Already existed in database");
+
+            if (actionType === ActionType.RETURN_BOOLEAN) {
+                return true;
+            } else {
+                toast.warn("Already existed in database");
+            }
+
         } else {
 
             const result = await fetch(`http://localhost:3000/api/part/${partCode}/${partName}`, {
@@ -53,7 +67,13 @@ class PartManager {
                 const isAddToStock = await PartManager.addToStock(partCode, partName);
 
                 if (isAddToStock) {
-                    toast.success("Part added successfully");
+
+                    if (actionType === ActionType.RETURN_BOOLEAN) {
+                        return true;
+                    } else {
+                        toast.success("Part added successfully");
+                    }
+
                 } else {
 
                     const result = await fetch(`http://localhost:3000/api/part/${partCode}`, {
@@ -61,7 +81,13 @@ class PartManager {
                     });
 
                     if (result.ok) {
-                        toast.error("Failed adding new part");
+
+                        if (actionType === ActionType.RETURN_BOOLEAN) {
+                            return false;
+                        } else {
+                            toast.error("Failed adding new part");
+                        }
+
                     } else {
                         toast.error("Error 404");
                         throw new Error("Something went wrong with removing part");
@@ -85,10 +111,5 @@ class PartManager {
         }
     }
 }
-
-const getCurrentDate = () => {
-    const options = { day: "numeric", month: "numeric", year: "numeric" };
-    return new Date().toLocaleDateString(undefined, options);
-};
 
 export default PartManager;
