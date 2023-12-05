@@ -1,4 +1,4 @@
-import PartManager from "@/utils/part";
+import PartManager, { ActionType } from "@/utils/part";
 import React, { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,7 +9,7 @@ const PartForm = ({ title = "Add Part", data = "" }) => {
 
     const filterButton = async () => {
         if (title === "Add Part") {
-            await PartManager.add(partCode, partName);
+            await PartManager.add(partCode, partName, ActionType.RETURN_TOAST);
         }
     };
 
