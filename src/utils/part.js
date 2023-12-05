@@ -2,8 +2,7 @@ import { toast } from "react-toastify";
 import { getCurrentDate } from "./datetime";
 
 export const ActionType = {
-    RETURN_TOAST: "RETURN_TOAST",
-    RETURN_BOOLEAN: "RETURN_BOOLEAN"
+    RETURN_TOAST: "RETURN_TOAST", RETURN_BOOLEAN: "RETURN_BOOLEAN"
 };
 
 class PartManager {
