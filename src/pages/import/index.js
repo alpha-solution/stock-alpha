@@ -1,23 +1,14 @@
 import DataTable from "@/components/DataTable";
+import ImportManager from "@/utils/import";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
-const getImports = async () => {
-    const res = await fetch("http://localhost:3000/api/impt");
-
-    if (res.ok) {
-        return await res.json();
-    } else {
-        return null;
-    }
-};
 
 export default function Import() {
     const [imports, setImports] = useState();
 
     useEffect(() => {
         const fetchImports = async () => {
-            const importsData = await getImports();
+            const importsData = await ImportManager.getAll();
 
             if (importsData) {
                 setImports(importsData);
