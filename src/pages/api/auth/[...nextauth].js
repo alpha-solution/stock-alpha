@@ -1,5 +1,5 @@
 import Employee from "@/models/employee";
-import connectMongoDB from "@/utils/connect";
+import connectMongoDB from "@/utils/database";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 

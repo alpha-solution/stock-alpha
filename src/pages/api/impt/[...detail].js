@@ -1,5 +1,5 @@
 import Import from "@/models/import";
-import connectMongoDB from "@/utils/connect";
+import connectMongoDB from "@/utils/database";
 
 export default async function handler(req, res) {
 
